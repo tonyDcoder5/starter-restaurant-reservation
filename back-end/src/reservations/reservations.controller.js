@@ -7,6 +7,12 @@ async function list(req, res) {
   });
 }
 
+async function create(req, res){
+  res.json({
+
+  })
+}
+
 module.exports = {
   list,
 };
