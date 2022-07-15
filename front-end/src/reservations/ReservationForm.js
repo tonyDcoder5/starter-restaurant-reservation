@@ -1,7 +1,9 @@
-import {Link} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 
 
 function ReservationForm({ res, handleChange, submitHandler }) {
+  const history = useHistory();
+
   return (
     <div className="container mt-3 mb-5">
       <h2>New Reservation</h2>
@@ -56,6 +58,8 @@ function ReservationForm({ res, handleChange, submitHandler }) {
                 required={true}
                 className="form-control"
                 type="date"
+                placeholder="YYYY-MM-DD" 
+                pattern="\d{4}-\d{2}-\d{2}"
                 name="reservation_date"
                 id="reservation_date"
                 value={res.reservation_date}
@@ -68,6 +72,7 @@ function ReservationForm({ res, handleChange, submitHandler }) {
                 required={true}
                 className="form-control"
                 type="time"
+                placeholder="HH:MM" pattern="[0-9]{2}:[0-9]{2}"
                 name="reservation_time"
                 id="reservation_time"
                 value={res.reservation_time}
@@ -79,7 +84,8 @@ function ReservationForm({ res, handleChange, submitHandler }) {
               <input
                 required={true}
                 className="form-control"
-                type="integer"
+                min= {1}
+                type="number"
                 name="people"
                 id="people"
                 placeholder="Enter # in Party"
@@ -90,10 +96,8 @@ function ReservationForm({ res, handleChange, submitHandler }) {
           </div>
           <div className="row mt-3">
             <div className="col">
-              <Link to="/dashboard">
               <button 
-              className="btn btn-secondary">Cancel</button>
-              </Link>
+              className="btn btn-secondary" onClick={()=> {history.goBack()}}>Cancel</button>
               <button
                 type="submit"
                 onClick={submitHandler}
