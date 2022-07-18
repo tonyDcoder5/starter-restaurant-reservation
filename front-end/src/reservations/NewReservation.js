@@ -1,7 +1,8 @@
 import ReservationForm from "./ReservationForm";
 import React, { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { createReservations } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
 export default function NewReservation() {
   const history = useHistory();
@@ -21,36 +22,27 @@ export default function NewReservation() {
   const handleChange = (event) =>
     setFormData({ ...formData, [event.target.name]: event.target.value });
 
-  const errorHandler = async () => {
-    
-    return(
-      <div className="alert alert-danger">
-        <p>Please try again, following errors occured:</p>
-        <ul>
-        {errors.map((error)=>{
-          return <li>{error}</li>
-        })}
-        </ul>
-      </div>
-    )
-  }
-
   const submitHandler = async (event) => {
     event.preventDefault();
     const abortController = new AbortController();
     try {
-        await createReservations(formData, abortController.signal);
-        history.push(`/dashboard`);
+        let form = {...formData, people: parseInt(formData.people)};
+        let date = form.reservation_date;
+        await createReservations(form, abortController.signal);
+        history.push(`/dashboard?date=${date}`);
       }
     catch (error) {
-      setErrors(error); }
+      if(!errors[error.message])
+      {
+        setErrors(error);
+    } }
   };
 
   return (
     <div>
-      {errors.length > 0 && 
-      errorHandler()
-      }
+      <div>
+        {errors.message ? <ErrorAlert error={errors} /> : null}
+      </div>
       <ReservationForm
         res={formData}
         submitHandler={submitHandler}

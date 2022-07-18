@@ -100,7 +100,6 @@ function ReservationForm({ res, handleChange, submitHandler }) {
               className="btn btn-secondary" onClick={()=> {history.goBack()}}>Cancel</button>
               <button
                 type="submit"
-                onClick={submitHandler}
                 className="btn btn-primary ml-2"
               >
                 Submit

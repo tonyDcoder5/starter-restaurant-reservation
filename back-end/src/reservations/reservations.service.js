@@ -7,11 +7,11 @@ function list(date) {
   .orderBy("reservation_time", "asc");
 }
 
-function create(res) {
-  return knex("reservations")
+async function create(res) {
+  const res_1 = await knex("reservations")
     .insert(res)
-    .returning("*")
-    .then((res) => res[0]);
+    .returning("*");
+  return res_1[0];
 }
 
 module.exports = {
