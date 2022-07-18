@@ -16,40 +16,41 @@ export default function NewReservation() {
   };
 
   const [formData, setFormData] = useState(newReserv);
-  const [viewErrors, setViewErrors] = useState(false);
+  const [errors, setErrors] = useState([]);
 
   const handleChange = (event) =>
     setFormData({ ...formData, [event.target.name]: event.target.value });
 
-  const verifyRes = () => {
-
+  const errorHandler = async () => {
+    
+    return(
+      <div className="alert alert-danger">
+        <p>Please try again, following errors occured:</p>
+        <ul>
+        {errors.map((error)=>{
+          return <li>{error}</li>
+        })}
+        </ul>
+      </div>
+    )
   }
 
   const submitHandler = async (event) => {
     event.preventDefault();
     const abortController = new AbortController();
     try {
-        verifyRes(formData);
         await createReservations(formData, abortController.signal);
         history.push(`/dashboard`);
       }
     catch (error) {
-      setViewErrors(true);
-      console.log(error.message);
-      return error;
-    }
+      setErrors(error); }
   };
 
   return (
     <div>
-      {viewErrors && <>
-      <div className="alert alert-danger">
-        <h4>Please try again, received following errors</h4>
-        <ul>
-          
-        </ul>
-      </div>
-      </>}
+      {errors.length > 0 && 
+      errorHandler()
+      }
       <ReservationForm
         res={formData}
         submitHandler={submitHandler}
