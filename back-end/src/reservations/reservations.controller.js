@@ -54,7 +54,7 @@ const verifyResDate = (req, res, next) => {
     if (new Date() > date) {
       next({
         status: 400,
-        message: "We do not serve the past, look to the future Scotty",
+        message: "We do not serve the past, look to the future and choose another working date",
       });
     }
     return next();
