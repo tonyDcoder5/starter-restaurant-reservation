@@ -36,7 +36,13 @@ function verifyResTime(req, res, next) {
   const { data: { reservation_time } = {} } = req.body;
 
   if (reservation_time === "" || anyLetters(reservation_time)) {
-    
+    let time = reservation_time.replace(":", "");
+    if (time >= 1030 && time <= 2130) {
+      return next();
+    } else {
+      return next({ status: 400, message: "we closed, choose another time" });
+    }
+
     return next({ status: 400, message: "reservation_time" });
   }
 
@@ -54,14 +60,14 @@ const verifyResDate = (req, res, next) => {
     if (new Date() > date) {
       next({
         status: 400,
-        message: "We do not serve the past, look to the future and choose another working date",
+        message:
+          "We do not serve the past, look to the future and choose another working date",
       });
     }
     return next();
   }
   return next({ status: 400, message: `reservation_date` });
 };
-
 
 function verifyPartyCount(req, res, next) {
   const { data: { people } = {} } = req.body;
