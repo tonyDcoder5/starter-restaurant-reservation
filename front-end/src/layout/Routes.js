@@ -18,8 +18,6 @@ function Routes() {
 
   const query = useQuery();
   const date = query.get("date");
-  const limit = query.get("limit");
-  console.log("date: ", date);
 
   return (
     <Switch>
@@ -30,7 +28,7 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route path="/dashboard">
-        <Dashboard date={today()} />
+        <Dashboard date={date || today()} />
       </Route>
       <Route exact={true} path="/">
         <Redirect to={"/dashboard"} />

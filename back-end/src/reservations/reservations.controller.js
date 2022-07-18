@@ -5,7 +5,8 @@ const { off } = require("../db/connection");
  * List handler for reservation resources
  */
 async function list(req, res) {
-  const data = await service.list(req.query.date);
+  const date = req.query.date;
+  const data = await service.list(date);
 
   res.json({
     data,
@@ -22,82 +23,113 @@ function anyLetters(str) {
   return /[a-zA-Z]/.test(str);
 }
 
-function hasProp(propertyName) {
-  return function (req, res, next) {
-    const { data = {} } = req.body;
-    if (data[propertyName]) {
-      return next();
-    }
-    next({ status: 400, message: `${propertyName}` });
+function verifyRes(req, res, next){
+  const reservation = req.body.data;
+  let errors = []; 
+  let message = '';
+  
+  if(!reservation) 
+  { 
+    message = `Invalid reservation.`;
+    errors.push(message); 
+    return next({ status: 400, message: errors[0] });
   };
-}
 
-function verifyResTime(req, res, next) {
-  const { data: { reservation_time } = {} } = req.body;
+  let props = ["first_name", "last_name", 
+  "mobile_number", "reservation_date", 
+  "reservation_time", "people"];
 
-  if (reservation_time === "" || anyLetters(reservation_time)) {
-    
-    return next({ status: 400, message: "reservation_time" });
+  props.forEach((prop)=>{
+    if(!reservation[prop]){
+      message = `Reservation missing ${prop}, try again`;
+      errors.push(message);
+    }
+  });
+
+  if(!verifyMobile(reservation.mobile_number)){
+    message = `Reservation missing mobile_number`;
+      errors.push(message);
+  }
+
+  if(!verifyPartyCount(reservation.people)){
+    message = `Invalid people entry, please try again with valid number`;
+    errors.push(message);
+  }
+
+  if(!verifyResTime(reservation.reservation_time)){
+    message = `Invalid reservation_time, please try again`;
+    errors.push(message);
+  }
+
+  if(verifyResDate(reservation.reservation_date)){
+    let message = verifyResDate(reservation.reservation_date);
+    errors.push(...message);
+  }
+
+  if(errors.length > 0){
+    return next({ status: 400, message: errors[0] })
   }
 
   return next();
 }
 
-const verifyResDate = (req, res, next) => {
-  const { data: { reservation_date } = {} } = req.body;
+function verifyResTime(time) {
 
-  if (reservation_date && !anyLetters(reservation_date)) {
-    const date = new Date(reservation_date);
-    if (date.getDay() === 1) {
-      next({ status: 400, message: "Sorry! We're closed on this day!" });
-    }
-    if (new Date() > date) {
-      next({
-        status: 400,
-        message: "We do not serve the past, look to the future and choose another working date",
-      });
-    }
-    return next();
+  if (time === "" || anyLetters(time)) {
+    
+    return false;
   }
-  return next({ status: 400, message: `reservation_date` });
+
+  return true;
+}
+
+function verifyResDate(date){
+  let messages = [];
+  let message = '';
+  if (date && !anyLetters(date)) {
+    const check = new Date(date);
+
+    if (check.getDay() === 1) {
+      message = "Sorry! We're closed on this day!";
+      messages.push(message);
+    }
+    if (new Date() > check) {
+      message = "We do not serve the past, look to the future and choose another working date";
+      messages.push(message);
+    }
+    
+   
+
+    if(messages.length > 0){
+      return messages;
+    }  
+
+    return false;
+  }
+
+  message = "Missing reservation_date, please try again";
+  messages.push(message)
+
+  return messages;
 };
 
+function verifyPartyCount(people) {
 
-function verifyPartyCount(req, res, next) {
-  const { data: { people } = {} } = req.body;
-
-  if (people && people > 0 && typeof people === "number") {
-    return next();
+  if (people && typeof people === "number" && people > 0) {
+    return true;
   }
-  next({
-    status: 400,
-    message: `people`,
-  });
+  return false;
 }
 
-function verifyMobile(req, res, next) {
-  const { data: { mobile_number } = {} } = req.body;
+function verifyMobile(mobile) {
 
-  if (mobile_number === "") {
-    return next({ status: 400, message: `mobile_number` });
-  }
-
-  return next();
+  return mobile ? true : false;
 }
 
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [
-    hasProp("first_name"),
-    hasProp("last_name"),
-    hasProp("mobile_number"),
-    hasProp("reservation_date"),
-    hasProp("reservation_time"),
-    hasProp("people"),
-    verifyPartyCount,
-    verifyResDate,
-    verifyResTime,
-    verifyMobile,
+    verifyRes,
     asyncErrorBoundary(create),
   ],
 };
