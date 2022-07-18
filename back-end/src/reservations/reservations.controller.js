@@ -57,7 +57,7 @@ function verifyRes(req, res, next){
   }
 
   if(!verifyResTime(reservation.reservation_time)){
-    message = `Invalid reservation_time, please try again`;
+    message = `Reservation_time outside of business hours/invalid`;
     errors.push(message);
   }
 
@@ -74,14 +74,17 @@ function verifyRes(req, res, next){
 }
 
 function verifyResTime(time) {
-
-  if (time === "" || anyLetters(time)) {
-    
-    return false;
+  if (time !== "" && !anyLetters(time)) {
+    let rawTime = time.replace(":", "");
+    if(rawTime >= 1030 && rawTime <= 2130){
+      return true;
+    }
+    else{
+      return false
+    }
   }
-
-  return true;
 }
+
 
 function verifyResDate(date){
   let messages = [];
