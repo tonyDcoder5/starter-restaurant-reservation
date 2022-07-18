@@ -1,4 +1,4 @@
-import {Table} from 'react-bootstrap';
+
 
 function ReservationsTable({data}){
 
