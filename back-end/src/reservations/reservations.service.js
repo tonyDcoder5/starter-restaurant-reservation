@@ -11,6 +11,7 @@ async function create(res) {
   const res_1 = await knex("reservations")
     .insert(res)
     .returning("*");
+    
   return res_1[0];
 }
 

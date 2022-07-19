@@ -19,77 +19,79 @@ async function create(req, res) {
   return res.status(201).json({ data });
 }
 
-function anyLetters(str) {
-  return /[a-zA-Z]/.test(str);
-}
-
-function verifyRes(req, res, next){
+function verifyRes(req, res, next) {
   const reservation = req.body.data;
-  let errors = []; 
-  let message = '';
-  
-  if(!reservation) 
-  { 
+  let errors = [];
+  let message = "";
+
+  if (!reservation) {
     message = `Invalid reservation.`;
-    errors.push(message); 
+    errors.push(message);
     return next({ status: 400, message: errors[0] });
-  };
+  }
 
-  let props = ["first_name", "last_name", 
-  "mobile_number", "reservation_date", 
-  "reservation_time", "people"];
+  let props = [
+    "first_name",
+    "last_name",
+    "mobile_number",
+    "reservation_date",
+    "reservation_time",
+    "people",
+  ];
 
-  props.forEach((prop)=>{
-    if(!reservation[prop]){
+  props.forEach((prop) => {
+    if (!reservation[prop]) {
       message = `Reservation missing ${prop}, try again`;
       errors.push(message);
     }
   });
 
-  if(!verifyMobile(reservation.mobile_number)){
+  if (!verifyMobile(reservation.mobile_number)) {
     message = `Reservation missing mobile_number`;
-      errors.push(message);
+    errors.push(message);
   }
 
-  if(!verifyPartyCount(reservation.people)){
+  if (!verifyPartyCount(reservation.people)) {
     message = `Invalid people entry, please try again with valid number`;
     errors.push(message);
   }
 
-  if(verifyResDate(reservation.reservation_date)){
+  if (verifyResDate(reservation.reservation_date)) {
     let message = verifyResDate(reservation.reservation_date);
     errors.push(...message);
   }
 
-  if(!verifyResTime(reservation.reservation_time)){
+  if (!verifyResTime(reservation.reservation_time)) {
     message = `reservation_time outside of business hours/invalid`;
     errors.push(message);
   }
 
-  if(errors.length > 0){
-    return next({ status: 400, message: errors[0] })
+  if (errors.length > 0) {
+    return next({ status: 400, message: errors[0] });
   }
 
   return next();
 }
 
 function verifyResTime(time) {
-  if (time !== "" && !anyLetters(time)) {
+  let timeFormat = /\d\d:\d\d/;
+
+  if (time !== "" && timeFormat.test(time)) {
     let rawTime = time.replace(":", "");
-    if(rawTime >= 1030 && rawTime <= 2130){
+    if (rawTime >= 1030 && rawTime <= 2130) {
       return true;
-    }
-    else{
-      return false
+    } else {
+      return false;
     }
   }
 }
 
-
-function verifyResDate(date){
+function verifyResDate(date) {
   let messages = [];
-  let message = '';
-  if (date && !anyLetters(date)) {
+  let message = "";
+  let dateFormat = /\d\d\d\d-\d\d-\d\d/;
+
+  if (date && dateFormat.test(date)) {
     const check = new Date(date);
 
     if (check.getDay() === 1) {
@@ -97,27 +99,25 @@ function verifyResDate(date){
       messages.push(message);
     }
     if (new Date() > check) {
-      message = "We do not serve the past, look to the future and choose another working date";
+      message =
+        "We do not serve the past, look to the future and choose another working date";
       messages.push(message);
     }
-    
-   
 
-    if(messages.length > 0){
+    if (messages.length > 0) {
       return messages;
-    }  
+    }
 
     return false;
   }
 
   message = "Missing reservation_date, please try again";
-  messages.push(message)
+  messages.push(message);
 
   return messages;
-};
+}
 
 function verifyPartyCount(people) {
-
   if (people && typeof people === "number" && people > 0) {
     return true;
   }
@@ -125,14 +125,10 @@ function verifyPartyCount(people) {
 }
 
 function verifyMobile(mobile) {
-
   return mobile ? true : false;
 }
 
 module.exports = {
   list: [asyncErrorBoundary(list)],
-  create: [
-    verifyRes,
-    asyncErrorBoundary(create),
-  ],
+  create: [verifyRes, asyncErrorBoundary(create)],
 };

@@ -21,6 +21,14 @@ function ReservationsTable({ data, date }) {
         <td>{formatAsDate(line.reservation_date)}</td>
         <td>{formatAsTime(line.reservation_time)}</td>
         <td>{line.mobile_number}</td>
+        <td>
+          <button
+            className="btn btn-success"
+            href={`/reservations/${line.reservation_id}/seat`}
+          >
+            Seat
+          </button>
+        </td>
       </tr>
     );
   });
@@ -29,7 +37,8 @@ function ReservationsTable({ data, date }) {
     <div className="reservations-display">
       <div className="container">
         <h4 className="mb-0">
-          Reservations for date <span>{date}</span></h4>
+          Reservations for date <span>{date}</span>
+        </h4>
         <button
           className="btn btn-secondary m-1"
           onClick={() => {
@@ -66,6 +75,7 @@ function ReservationsTable({ data, date }) {
               <th>Reservation Date</th>
               <th>Reservation Time</th>
               <th>Mobile Number</th>
+              <th>Party Here?</th>
             </tr>
           </thead>
           <tbody>{table}</tbody>

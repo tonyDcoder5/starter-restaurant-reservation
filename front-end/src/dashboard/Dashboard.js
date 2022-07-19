@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
-import { useHistory } from "react-router";
-import { formatAsDate, next, previous, today } from "../utils/date-time";
 import ReservationsTable from "../reservations/ReservationsTable";
 import TablesDisplay from "../tables/TablesDisplay";
 
@@ -23,9 +21,9 @@ function Dashboard({ date }) {
   function loadDashboard() {
     const abortController = new AbortController();
     setReservationsError(null);
-    // listTables({ date }, abortController.signal)
-    //   .then(setTables)
-    //   .catch(setTablesError);
+    listTables(abortController.signal)
+      .then(setTables)
+      .catch(setTablesError);
 
     listReservations({ date }, abortController.signal)
       .then(setReservations)

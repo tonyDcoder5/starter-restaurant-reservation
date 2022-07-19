@@ -14,10 +14,10 @@ function TablesDisplay({ data, date }) {
   let table = data.map((line, index) => {
     return (
       <tr key={index}>
+        <td>{line.table_id}</td>
         <td>{line.table_name}</td>
         <td>{line.capacity}</td>
-        <td>{line.reservation_status}</td>
-        
+        <td data-table-id-status={line.table_id} >{line.status === "seated" ? "Occupied" : "Free"}</td>
       </tr>
     );
   });
@@ -29,12 +29,10 @@ function TablesDisplay({ data, date }) {
           <thead>
             <h2>Tables</h2>
             <tr>
-              <th></th>
+              <th>Table ID</th>
               <th>Table Name</th>
               <th>Capacity</th>
               <th>Status</th>
-              <th>Reservation Time</th>
-              <th>Mobile Number</th>
             </tr>
           </thead>
           <tbody>{table}</tbody>
