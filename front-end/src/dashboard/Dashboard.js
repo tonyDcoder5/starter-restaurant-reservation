@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { listReservations } from "../utils/api";
+import { listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { useHistory } from "react-router";
 import { formatAsDate, next, previous, today } from "../utils/date-time";
 import ReservationsTable from "../reservations/ReservationsTable";
+import TablesDisplay from "../tables/TablesDisplay";
 
 /**
  * Defines the dashboard page.
@@ -13,15 +14,19 @@ import ReservationsTable from "../reservations/ReservationsTable";
  */
 function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
+  const [tables, setTables] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
-  const history = useHistory();
-  const currentDate = formatAsDate(today());
+  const [tablesError, setTablesError] = useState(null);
 
   useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
     const abortController = new AbortController();
     setReservationsError(null);
+    // listTables({ date }, abortController.signal)
+    //   .then(setTables)
+    //   .catch(setTablesError);
+
     listReservations({ date }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
@@ -32,35 +37,15 @@ function Dashboard({ date }) {
     <main>
       <h1>Dashboard</h1>
       <div className="d-md-flex mb-3">
-        <h4 className="mb-0">
-          Reservations for date <span>{date}</span>
-        </h4>
+        <ErrorAlert error={reservationsError || tablesError} />
       </div>
-      <ErrorAlert error={reservationsError} />
-      <div className="container">
-        <div className="container">
-          <button
-            className="btn btn-secondary m-1"
-            onClick={() => {
-              history.push(`/dashboard?date=${previous(date)}`);
-            }}
-          >
-            Yesterday
-          </button>
-          <button className="btn btn-success m-1"
-          onClick={()=>{
-            history.push(`/dashboard?date=${currentDate}`)
-          }}> Today </button>
-          <button
-            className="btn btn-primary m-1"
-            onClick={() => {
-              history.push(`/dashboard?date=${next(date)}`);
-            }}
-          >
-            Tomorrow
-          </button>
+      <div className="container row">
+        <div className="row">
+          <TablesDisplay data={tables} date={date} />
         </div>
-        <ReservationsTable data={reservations} />
+        <div className="row mt-5">
+          <ReservationsTable data={reservations} date={date} />
+        </div>
       </div>
     </main>
   );

@@ -2,3 +2,12 @@
   background-color: #393a44;
   min-width: 200px;
 }
+
+
+/* DASHBOARD TABLES CSS */
+.reservations-display {  border: 3px solid rgba(255, 255, 255, 0.5);
+  margin: 0px 15px 15px 0px;
+  padding: 1em;
+  padding-bottom: 20px;
+  border-radius: 20px;
+}

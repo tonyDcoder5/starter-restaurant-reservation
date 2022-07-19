@@ -23,6 +23,7 @@ export default function NewTable() {
     const abortController = new AbortController();
     try {
         let form = {...formData, capacity: parseInt(formData.capacity)};
+        console.log(form, "Create table test");
         // await createTables(form, abortController.signal);
         history.push(`/dashboard`);
       }
@@ -35,9 +36,9 @@ export default function NewTable() {
 
   return (
     <div>
-      {/* <div>
+      <div>
         {errors.message ? <ErrorAlert error={errors} /> : null}
-      </div> */}
+      </div>
       <TableForm
         table={formData}
         submitHandler={submitHandler}
