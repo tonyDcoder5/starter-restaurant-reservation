@@ -15,6 +15,7 @@ function TableForm({ table, handleChange, submitHandler }) {
               type="text"
               placeholder="Enter table name"
               required={true}
+              minLength="2"
               name="table_name"
               id="table_name"
               value={table.table_name}
