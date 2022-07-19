@@ -62,7 +62,7 @@ function verifyRes(req, res, next){
   }
 
   if(!verifyResTime(reservation.reservation_time)){
-    message = `Reservation_time outside of business hours/invalid`;
+    message = `reservation_time outside of business hours/invalid`;
     errors.push(message);
   }
 
