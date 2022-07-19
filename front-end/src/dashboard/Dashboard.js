@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { useHistory } from "react-router";
-import { asDateString, formatAsDate, next, previous, today } from "../utils/date-time";
+import { formatAsDate, next, previous, today } from "../utils/date-time";
 import ReservationsTable from "../reservations/ReservationsTable";
-import useQuery from "../utils/useQuery";
 
 /**
  * Defines the dashboard page.
@@ -39,7 +38,7 @@ function Dashboard({ date }) {
       </div>
       <ErrorAlert error={reservationsError} />
       <div className="container">
-        <div className="row">
+        <div className="container">
           <button
             className="btn btn-secondary m-1"
             onClick={() => {
