@@ -1,15 +1,7 @@
 const knex = require("../db/connection");
 
-let tables = [
-{table_id: "1", table_name: "test 1", capacity: "6", status: "seated"}, 
-{table_id: "2", table_name: "test 2", capacity: "6", status: ""}, 
-{table_id: "3", table_name: "test 3", capacity: "1", status: ""}, 
-{table_id: "4", table_name: "test 4", capacity: "1", status: "seated"}, 
-]
-
 function list() {
-  return tables;
-  //knex("tables").select("*").orderBy("table_name");
+  return knex("tables").select("*").orderBy("table_name");
 }
 
 async function create(table) {
@@ -17,7 +9,17 @@ async function create(table) {
   return data[0];
 }
 
+function read(table_id){
+  return knex("tables").select("*").where({ table_id }).first();
+}
+
+async function update(table){
+
+}
+
 module.exports = {
   list,
   create,
+  read,
+  //update,
 };

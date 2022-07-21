@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 // import { createTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
+import { createTables } from "../utils/api";
 
 export default function NewTable() {
   const history = useHistory();
@@ -23,8 +24,7 @@ export default function NewTable() {
     const abortController = new AbortController();
     try {
         let form = {...formData, capacity: parseInt(formData.capacity)};
-        console.log(form, "Create table test");
-        // await createTables(form, abortController.signal);
+        await createTables(form, abortController.signal);
         history.push(`/dashboard`);
       }
     catch (error) {

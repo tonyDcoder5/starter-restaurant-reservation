@@ -17,7 +17,6 @@ function TableForm({ table, handleChange, submitHandler }) {
               required={true}
               minLength="2"
               name="table_name"
-              id="table_name"
               value={table.table_name}
               onChange={handleChange}
             />
@@ -32,7 +31,6 @@ function TableForm({ table, handleChange, submitHandler }) {
               className="form-control"
               min={1}
               name="capacity"
-              id="capacity"
               value={table.capacity}
               onChange={handleChange}
             />

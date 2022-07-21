@@ -19,6 +19,26 @@ async function create(req, res) {
   return res.status(201).json({ data });
 }
 
+function read(req, res) {
+  const {reservation: data} = res.locals;
+
+  res.json({ data });
+}
+
+async function resExists(req, res, next) {
+  const {reservation_id} = req.params;
+  const reservation = await service.read(reservation_id);
+  if (reservation) {   
+    res.locals.reservation = reservation;
+    return next();
+  }
+  else{
+  return next({ status: 404, message: `reservation cannot be found.` });
+  }
+} 
+  
+
+
 function verifyRes(req, res, next) {
   const reservation = req.body.data;
   let errors = [];
@@ -128,7 +148,9 @@ function verifyMobile(mobile) {
   return mobile ? true : false;
 }
 
+
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [verifyRes, asyncErrorBoundary(create)],
+  read: [asyncErrorBoundary(resExists), read],
 };

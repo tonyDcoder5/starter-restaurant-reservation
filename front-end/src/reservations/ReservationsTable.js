@@ -7,6 +7,7 @@ import {
   today,
 } from "../utils/date-time";
 import { useHistory } from "react-router";
+import { Link } from "react-router-dom";
 
 function ReservationsTable({ data, date }) {
   const history = useHistory();
@@ -22,12 +23,13 @@ function ReservationsTable({ data, date }) {
         <td>{formatAsTime(line.reservation_time)}</td>
         <td>{line.mobile_number}</td>
         <td>
-          <button
+          <Link
             className="btn btn-success"
-            href={`/reservations/${line.reservation_id}/seat`}
+            // href={`/reservations/${line.reservation_id}/seat`}
+            to={`/reservations/${line.reservation_id}/seat`}
           >
             Seat
-          </button>
+          </Link>
         </td>
       </tr>
     );

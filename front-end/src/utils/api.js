@@ -32,13 +32,11 @@ headers.append("Content-Type", "application/json");
 async function fetchJson(url, options, onCancel) {
   try {
     const response = await fetch(url, options);
-
     if (response.status === 204) {
       return null;
     }
 
     const payload = await response.json();
-
     if (payload.error) {
       return Promise.reject({ message: payload.error });
     }
@@ -80,6 +78,16 @@ export async function createReservations(res, signal){
   return await fetchJson(url, options, res);  
 }
 
+export async function readReservation(reservation_id, signal){
+  const url = `${API_BASE_URL}/reservations/${reservation_id}`;
+  const options = {
+    method: "GET",
+    signal,
+  };
+
+  return await fetchJson(url, options);  
+}
+
 export async function listTables(signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
 
@@ -96,4 +104,30 @@ export async function createTables(table, signal){
   };
 
   return await fetchJson(url, options, table);  
+}
+
+export async function readTable(table_id, signal){
+  const url = `${API_BASE_URL}/tables/${table_id}`;
+  const options = {
+    method: "GET",
+    signal,
+  };
+
+  return await fetchJson(url, options);  
+}
+
+export async function seatTable(table, reservation, signal){
+  const url = `${API_BASE_URL}/tables/${table.table_id}/seat`;
+
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({data: reservation}),
+    signal,
+  };
+
+  console.log("test seat function", table, reservation, url);
+
+  return await fetchJson(url, options, reservation)
+
 }

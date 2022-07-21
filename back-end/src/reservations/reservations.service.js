@@ -15,7 +15,12 @@ async function create(res) {
   return res_1[0];
 }
 
+function read(reservation_id){
+  return knex("reservations").select("*").where({ reservation_id }).first();
+}
+
 module.exports = {
   list,
   create,
+  read,
 };

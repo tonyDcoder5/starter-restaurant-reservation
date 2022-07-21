@@ -1,15 +1,7 @@
 import { Table } from "react-bootstrap";
-import {
-  formatAsDate,
-  next,
-  previous,
-  today,
-} from "../utils/date-time";
-import { useHistory } from "react-router";
 
-function TablesDisplay({ data, date }) {
-  const history = useHistory();
-  const currentDate = formatAsDate(today());
+
+function TablesDisplay({ data }) {
 
   let table = data.map((line, index) => {
     return (
@@ -17,7 +9,9 @@ function TablesDisplay({ data, date }) {
         <td>{line.table_id}</td>
         <td>{line.table_name}</td>
         <td>{line.capacity}</td>
-        <td data-table-id-status={line.table_id} >{line.status === "seated" ? "Occupied" : "Free"}</td>
+        <td data-table-id-status={line.table_id}>
+          {line.reservation_id ? "Occupied" : "Free"}
+        </td>
       </tr>
     );
   });
@@ -25,9 +19,9 @@ function TablesDisplay({ data, date }) {
   return (
     <div className="tables-display">
       <div className="container ml-3">
+        <h2>Tables</h2>
         <Table striped>
           <thead>
-            <h2>Tables</h2>
             <tr>
               <th>Table ID</th>
               <th>Table Name</th>

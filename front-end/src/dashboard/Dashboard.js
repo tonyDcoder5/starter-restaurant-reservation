@@ -39,7 +39,7 @@ function Dashboard({ date }) {
       </div>
       <div className="container row">
         <div className="row">
-          <TablesDisplay data={tables} date={date} />
+          <TablesDisplay data={tables} />
         </div>
         <div className="row mt-5">
           <ReservationsTable data={reservations} date={date} />
