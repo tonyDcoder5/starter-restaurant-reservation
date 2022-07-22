@@ -48,7 +48,7 @@ async function tableExists(req, res, next) {
     return next();
   }
 
-  next({ status: 404, message: `${table_id}` });
+  next({ status: 404, message: `table_id: ${table_id} does not exist` });
 }
 
 function verifyTable(req, res, next) {
@@ -140,16 +140,7 @@ async function verifyUpdate(req, res, next){
 
   next();
 }
-/*
-ADD VALIDATION FOR TABLE 
-PUT /tables/:table_id/seat
-  - returns 400 if data is missing ***must come before 
-  - returns 400 if reservation_id is missing ***must come before 
-  - returns 404 if reservation_id does not exist 
-  - returns 200 if table has sufficient capacity 
-  - returns 400 if table does not have sufficient capacity 
-  - returns 400 if table is occupied 
-*/
+
 
 module.exports = {
   list: [asyncErrorBoundary(list)],
