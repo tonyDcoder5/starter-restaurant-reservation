@@ -1,9 +1,11 @@
 const service = require("./reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const { off } = require("../db/connection");
+
 /**
  * List handler for reservation resources
  */
+
 async function list(req, res) {
   const date = req.query.date;
   const data = await service.list(date);
@@ -20,7 +22,7 @@ async function create(req, res) {
 }
 
 function read(req, res) {
-  const {reservation: data} = res.locals;
+  const data= res.locals.reservation;
 
   res.json({ data });
 }
@@ -33,7 +35,7 @@ async function resExists(req, res, next) {
     return next();
   }
   else{
-  return next({ status: 404, message: `reservation cannot be found.` });
+  return next({ status: 404, message: `99 reservation cannot be found.` });
   }
 } 
   

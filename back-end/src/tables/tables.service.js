@@ -9,17 +9,21 @@ async function create(table) {
   return data[0];
 }
 
-function read(table_id){
+function read(table_id) {
   return knex("tables").select("*").where({ table_id }).first();
 }
 
-async function update(table){
-
+async function update(table) {
+  return knex("tables")
+    .select("*")
+    .where({ table_id: table.table_id })
+    .update(table, "*")
+    .then((data)=> data[0]);
 }
 
 module.exports = {
   list,
   create,
   read,
-  //update,
+  update,
 };

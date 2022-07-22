@@ -1,6 +1,11 @@
 import { useHistory, useParams } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
-import { listTables, readReservation, readTable, seatTable } from "../utils/api";
+import {
+  listTables,
+  readReservation,
+  readTable,
+  updateTable,
+} from "../utils/api";
 import { useEffect, useState } from "react";
 import ErrorAlert from "../layout/ErrorAlert";
 
@@ -13,11 +18,12 @@ function SeatReservation() {
   const history = useHistory();
   const abortController = new AbortController();
 
-
   const loadPage = (id) => {
     setError(null);
     listTables(abortController.signal).then(setTables).catch(setError);
-    readReservation(id, abortController.signal).then(setReservation).catch(setError);
+    readReservation(id, abortController.signal)
+      .then(setReservation)
+      .catch(setError);
 
     return () => abortController.abort();
   };
@@ -26,23 +32,43 @@ function SeatReservation() {
     loadPage(reservation_id);
   }, [reservation_id]);
 
-  const handleChange = async (event) =>
-  {
+  const handleChange = async (event) => {
+    setError(null);
     const id = event.target.value;
     const data = await readTable(id, abortController.signal);
-    setTable(data);
-    console.log(table, reservation);
-    return table;
-
+    if (data.capacity >= reservation.people) {
+      setTable(data);
+      console.log(table);
+    } else {
+      setError({ status: 400, message: `not enough capacity for party size` });
+    }
   };
 
   const submitHandler = async (event) => {
     event.preventDefault();
+    let update = {};
     try {
-      if(table.capcity >= reservation.people){
-      await seatTable(table, reservation, abortController.signal);
-      history.push(`/dashboard`);
-    }
+      if (table.capacity >= reservation.people) {
+        update = update = {
+          ...table,
+          reservation_id: reservation_id,
+          status: "Booked",
+        };
+        console.log(update, "before update api call");
+        await updateTable(
+          update.table_id,
+          update.reservation_id,
+          update.status,
+          abortController.signal
+        );
+        console.log(table, "after update api call");
+        history.push(`/dashboard`);
+      } else {
+        setError({
+          status: 400,
+          message: `not enough capacity for party size`,
+        });
+      }
     } catch (error) {
       setError(error);
     }
@@ -53,14 +79,20 @@ function SeatReservation() {
       <div className="container mt-3 ml-3">
         <h2 className="mt-4">Seat Reservation</h2>
         <ErrorAlert error={err} />
-        <h4>Seating reservation ID# {reservation && reservation.reservation_id}</h4>
-        <p>{reservation.last_name}, {reservation.first_name} - {reservation.mobile_number}</p>
+        <h4>
+          Seating reservation ID# {reservation && reservation.reservation_id}
+        </h4>
+        <p>
+          {reservation.last_name}, {reservation.first_name} -{" "}
+          {reservation.mobile_number}
+        </p>
         <p>Party size: {reservation.people}</p>
         <div className="m-2">
           <Form onSubmit={submitHandler}>
             <Form.Group controlId="table_id" className="select-form mt-3 mb-5">
               <Form.Label>Table number</Form.Label>
               <Form.Select
+                name="table_id"
                 size="sm"
                 className="ml-3 table-select"
                 onChange={handleChange}
@@ -69,7 +101,7 @@ function SeatReservation() {
                 {tables.length > 0 &&
                   tables.map((table, index) => {
                     return (
-                      <option key={index} value={table.table_id}>
+                      <option key={table.table_id} value={table.table_id}>
                         {table.table_name} - {table.capacity}
                       </option>
                     );

@@ -116,18 +116,16 @@ export async function readTable(table_id, signal){
   return await fetchJson(url, options);  
 }
 
-export async function seatTable(table, reservation, signal){
-  const url = `${API_BASE_URL}/tables/${table.table_id}/seat`;
+export async function updateTable(table_id, reservation_id, status, signal){
+  const url = `${API_BASE_URL}/tables/${table_id}/seat`;
 
   const options = {
     method: "PUT",
     headers,
-    body: JSON.stringify({data: reservation}),
+    body: JSON.stringify({data: {reservation_id: reservation_id, status: "Seated"}}),
     signal,
   };
 
-  console.log("test seat function", table, reservation, url);
-
-  return await fetchJson(url, options, reservation)
+  return await fetchJson(url, options, {})
 
 }
