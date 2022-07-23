@@ -35,7 +35,7 @@ async function resExists(req, res, next) {
     return next();
   }
   else{
-  return next({ status: 404, message: `99 reservation cannot be found.` });
+  return next({ status: 404, message: `${reservation_id} reservation cannot be found.` });
   }
 } 
   
