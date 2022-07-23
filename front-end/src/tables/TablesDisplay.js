@@ -1,20 +1,60 @@
+import { useState } from "react";
 import { Table } from "react-bootstrap";
+import { useHistory } from "react-router";
+import { finishTable, listTables } from "../utils/api";
 
 
 function TablesDisplay({ data }) {
+  const history = useHistory(); 
+  const [tables, setTables] = useState(data);
 
-  let table = data.map((line, index) => {
-    return (
-      <tr key={index}>
-        <td>{line.table_id}</td>
-        <td>{line.table_name}</td>
-        <td>{line.capacity}</td>
-        <td data-table-id-status={line.table_id}>
-          {line.reservation_id ? "Occupied" : "Free"}
-        </td>
-      </tr>
-    );
-  });
+  const finishClickHandler = async (id) => {
+    const abortController = new AbortController();
+    if (
+      window.confirm(
+        `Is this table ready to seat new guests?`
+      )) {
+      finishTable(id, abortController.signal)
+      let update = await listTables(abortController.signal);
+      console.log(update);
+      setTables(update);
+      history.push("/")
+    }
+    else{
+      history.push("/")
+    }
+  }
+
+
+  function tableDisplay(tables){
+    let arr = [...tables]; 
+
+    return arr.map((line, index) => {
+      return (
+        <tr key={index}>
+          <td>{line.table_id}</td>
+          <td>{line.table_name}</td>
+          <td>{line.capacity}</td>
+          <td data-table-id-status={line.table_id}>
+            {line.reservation_id ? "Occupied" : "Free"}
+          </td>
+          <td>
+            {line.reservation_id && 
+            <button
+              data-table-id-finish={line.table_id}
+              className="btn btn-danger"
+              onClick={()=>{
+                finishClickHandler(line.table_id);
+              }}
+            >
+              Finish
+            </button>}
+          </td>
+        </tr>
+      );
+    })}
+
+  
 
   return (
     <div className="tables-display">
@@ -27,9 +67,10 @@ function TablesDisplay({ data }) {
               <th>Table Name</th>
               <th>Capacity</th>
               <th>Status</th>
+              <th>Finished?</th>
             </tr>
           </thead>
-          <tbody>{table}</tbody>
+          <tbody>{tables ? tableDisplay(data) : tableDisplay(tables)}</tbody>
         </Table>
       </div>
     </div>
