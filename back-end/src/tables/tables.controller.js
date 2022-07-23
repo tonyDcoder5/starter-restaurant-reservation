@@ -130,7 +130,7 @@ async function verifyUpdate(req, res, next){
 
 
   if(table.reservation_id){
-    next({status:400, message: `Table is occupied`});
+    next({status:400, message: `Table is occupied!`});
   }
 
   if(table.capacity < reservation.people)
