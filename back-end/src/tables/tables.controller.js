@@ -31,11 +31,22 @@ async function update(req, res) {
   const editTable = {
     ...res.locals.table,
     reservation_id: req.body.data.reservation_id,
+    status: 'Seated',
   };
   
   await service.update(editTable);
   const updateTable = await service.read(editTable.table_id);
   res.json({ data: updateTable });
+}
+
+async function finish(req, res) {
+  const editTable = {
+    ...res.locals.table,
+    reservation_id: null,
+  };
+  
+  await service.update(editTable);
+  res.status(200).json({editTable});
 }
 
 async function tableExists(req, res, next) {
@@ -127,10 +138,8 @@ async function verifyUpdate(req, res, next){
     next({status: 404, message: `reservation_id ${req.body.data.reservation_id}`})
   }
 
-
-
   if(table.reservation_id){
-    next({status:400, message: `Table is occupied`});
+    next({status:400, message: `Table is occupied!`});
   }
 
   if(table.capacity < reservation.people)
@@ -141,10 +150,21 @@ async function verifyUpdate(req, res, next){
   next();
 }
 
+async function verifyFinish(req, res, next){
+  let table = res.locals.table;
+
+  if(!table.reservation_id)
+  {
+    next({status: 400, message: `Table ${table.table_id} is not occupied`})
+  }
+
+  next();
+}
 
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [verifyTable, asyncErrorBoundary(create)],
   read: [asyncErrorBoundary(tableExists), read],
-  update: [asyncErrorBoundary(tableExists), asyncErrorBoundary(verifyUpdate), asyncErrorBoundary(update)]
+  update: [asyncErrorBoundary(tableExists), asyncErrorBoundary(verifyUpdate), asyncErrorBoundary(update)],
+  finish: [asyncErrorBoundary(tableExists), asyncErrorBoundary(verifyFinish), asyncErrorBoundary(finish)],
 };

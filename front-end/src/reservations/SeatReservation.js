@@ -38,7 +38,6 @@ function SeatReservation() {
     const data = await readTable(id, abortController.signal);
     if (data.capacity >= reservation.people) {
       setTable(data);
-      console.log(table);
     } else {
       setError({ status: 400, message: `not enough capacity for party size` });
     }
@@ -54,14 +53,12 @@ function SeatReservation() {
           reservation_id: reservation_id,
           status: "Booked",
         };
-        console.log(update, "before update api call");
         await updateTable(
           update.table_id,
           update.reservation_id,
           update.status,
           abortController.signal
         );
-        console.log(table, "after update api call");
         history.push(`/dashboard`);
       } else {
         setError({
