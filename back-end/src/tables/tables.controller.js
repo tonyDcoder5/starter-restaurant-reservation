@@ -43,6 +43,7 @@ async function finish(req, res) {
   const editTable = {
     ...res.locals.table,
     reservation_id: null,
+    status: "Free",
   };
   
   await service.update(editTable);
