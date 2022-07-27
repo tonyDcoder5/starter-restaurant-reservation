@@ -39,6 +39,16 @@ async function update(req, res) {
   res.status(200).json({ data: updateRes });
 }
 
+async function edit(req, res) {
+  const editRes = {
+    ...req.body.data,
+  };
+  
+  await service.edit(editRes);
+  const updateRes = await service.read(editRes.reservation_id);
+  res.status(200).json({ data: updateRes });
+}
+
 async function resExists(req, res, next) {
   const {reservation_id} = req.params;
   const reservation = await service.read(reservation_id);
@@ -63,6 +73,9 @@ function verifyStatus(req, res, next){
     }
     if(reservation.status === statuses[2]){
       return next({status: 400, message: `reservation is already finished, cannot update finished reservation ${reservation.reservation_id}`});
+    }
+    if(reservation.status === statuses[3]){
+      return next({status: 400, message: `reservation is already cancelled, cannot update cancelled reservation ${reservation.reservation_id}`});
     }
 
   return next({status: 400, message: `status: ${reservation.status} is unknown/invalid try again`})
@@ -210,4 +223,5 @@ module.exports = {
   create: [verifyRes, asyncErrorBoundary(create)],
   read: [asyncErrorBoundary(resExists), read],
   update: [verifyUpdateStatus, asyncErrorBoundary(resExists), verifyStatus, asyncErrorBoundary(update)],
+  edit: [asyncErrorBoundary(resExists), verifyRes, asyncErrorBoundary(edit)]
 };

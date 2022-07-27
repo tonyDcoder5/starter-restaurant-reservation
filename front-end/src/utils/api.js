@@ -99,6 +99,32 @@ export async function searchReservations(search, signal) {
     .then(formatReservationTime);
 }
 
+export async function editReservation(reservation, signal){
+  const url = `${API_BASE_URL}/reservations/${reservation.reservation_id}`;
+
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({data: {reservation}}),
+    signal,
+  };
+
+  return await fetchJson(url, options, {})
+}
+
+export async function cancelReservation(reservation, signal){
+  const url = `${API_BASE_URL}/reservations/${reservation.reservation_id}/status`;
+
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({data: {status: "cancelled"}}),
+    signal,
+  };
+
+  return await fetchJson(url, options, {})
+}
+
 export async function listTables(signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
 
