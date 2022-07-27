@@ -88,6 +88,16 @@ export async function readReservation(reservation_id, signal){
   return await fetchJson(url, options);  
 }
 
+export async function searchReservations(search, signal) {
+  const url = new URL(`${API_BASE_URL}/reservations`);
+  
+  Object.entries(search).forEach(([key, value]) =>
+  url.searchParams.append(key, value.toString()));
+  
+  return await fetchJson(url, { headers, signal }, [])
+    .then(formatReservationDate)
+    .then(formatReservationTime);
+}
 
 export async function listTables(signal) {
   const url = new URL(`${API_BASE_URL}/tables`);

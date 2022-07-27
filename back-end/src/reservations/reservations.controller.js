@@ -7,12 +7,13 @@ const { off } = require("../db/connection");
  */
 
 async function list(req, res) {
-  const date = req.query.date;
-  const data = await service.list(date);
-
-  res.json({
-    data,
-  });
+  if (req.query.date) {
+    const data = await service.list(req.query.date);
+    res.json({ data });
+  } else {
+    const data = await service.search(req.query.mobile_number);
+    res.json({ data });
+  }
 }
 
 async function create(req, res) {
