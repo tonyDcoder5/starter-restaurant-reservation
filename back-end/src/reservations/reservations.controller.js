@@ -27,6 +27,17 @@ function read(req, res) {
   res.json({ data });
 }
 
+async function update(req, res) {
+  const editRes = {
+    ...res.locals.reservation,
+    status: req.body.data.status,
+  };
+  
+  await service.update(editRes);
+  const updateRes = await service.read(editRes.reservation_id);
+  res.status(200).json({ data: updateRes });
+}
+
 async function resExists(req, res, next) {
   const {reservation_id} = req.params;
   const reservation = await service.read(reservation_id);
@@ -39,7 +50,38 @@ async function resExists(req, res, next) {
   }
 } 
   
+function verifyStatus(req, res, next){
+  let statuses = ["booked", "seated", "finished", "cancelled"];
+  let reservation = res.locals.reservation;
 
+    if(reservation.status === statuses[0]){
+      return next();
+    }
+    if(reservation.status === statuses[1]){
+      return next();
+    }
+    if(reservation.status === statuses[2]){
+      return next({status: 400, message: `reservation is already finished, cannot update finished reservation ${reservation.reservation_id}`});
+    }
+
+  return next({status: 400, message: `status: ${reservation.status} is unknown/invalid try again`})
+  
+}
+
+function verifyUpdateStatus(req, res, next){
+  let update = req.body.data.status;
+  let statuses = ["booked", "seated", "finished", "cancelled"];
+
+  if(!update){
+    return next({status: 400, message: `reservation status: ${update} invalid/undefined, try again`})
+  }
+
+  if(!statuses.includes(update)){
+    return next({status: 400, message: `reservation status: ${update} invalid/undefined, try again`})
+  }
+
+  return next();
+}
 
 function verifyRes(req, res, next) {
   const reservation = req.body.data;
@@ -86,6 +128,17 @@ function verifyRes(req, res, next) {
   if (!verifyResTime(reservation.reservation_time)) {
     message = `reservation_time outside of business hours/invalid`;
     errors.push(message);
+  }
+
+  if(reservation.status !== "booked"){
+    if(reservation.status === "seated"){
+      message = `reservation is already seated`
+      errors.push(message);
+    }
+    else if(reservation.status === "finished"){
+      message = `reservation is already finished`
+      errors.push(message);
+    }
   }
 
   if (errors.length > 0) {
@@ -155,4 +208,5 @@ module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [verifyRes, asyncErrorBoundary(create)],
   read: [asyncErrorBoundary(resExists), read],
+  update: [verifyUpdateStatus, asyncErrorBoundary(resExists), verifyStatus, asyncErrorBoundary(update)],
 };

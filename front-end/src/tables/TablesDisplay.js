@@ -8,20 +8,19 @@ function TablesDisplay({ data }) {
   const history = useHistory(); 
   const [tables, setTables] = useState(data);
 
-  const finishClickHandler = async (id) => {
+  const finishClickHandler = async (table) => {
     const abortController = new AbortController();
     if (
       window.confirm(
         `Is this table ready to seat new guests?`
       )) {
-      finishTable(id, abortController.signal)
+      await finishTable(table.table_id, abortController.signal);
       let update = await listTables(abortController.signal);
-      console.log(update);
       setTables(update);
-      history.push("/")
+      history.push("/");
     }
     else{
-      history.push("/")
+      history.push("/");
     }
   }
 
@@ -44,7 +43,7 @@ function TablesDisplay({ data }) {
               data-table-id-finish={line.table_id}
               className="btn btn-danger"
               onClick={()=>{
-                finishClickHandler(line.table_id);
+                finishClickHandler(line);
               }}
             >
               Finish
