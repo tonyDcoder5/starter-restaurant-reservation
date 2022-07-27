@@ -31,7 +31,7 @@ async function update(req, res) {
   const editTable = {
     ...res.locals.table,
     reservation_id: req.body.data.reservation_id,
-    status: 'Seated',
+    status: "seated",
   };
   
   await service.update(editTable);
@@ -45,8 +45,11 @@ async function finish(req, res) {
     reservation_id: null,
     status: "Free",
   };
-  
-  await service.update(editTable);
+  const editRes = {
+    ...res.locals.reservation,
+    status: "finished",
+  }
+  await service.finish(editTable, editRes);
   res.status(200).json({editTable});
 }
 
@@ -60,7 +63,7 @@ async function tableExists(req, res, next) {
     return next();
   }
 
-  next({ status: 404, message: `table_id: ${table_id} does not exist` });
+  return next({ status: 404, message: `table_id: ${table_id} does not exist` });
 }
 
 function verifyTable(req, res, next) {
@@ -117,38 +120,45 @@ function verifyTableName(name) {
   }
 }
 
-
 async function verifyUpdate(req, res, next){
   let table = res.locals.table;
   let data = req.body.data;
 
   if(!data)
   {
-    next({status: 400, message: `data invalid`})
+    return next({status: 400, message: `data invalid`})
   }
   
   if(!req.body.data.reservation_id)
   {
-    next({status: 400, message: `reservation_id ${req.body.data.reservation_id}`})
+    return next({status: 400, message: `reservation_id ${req.body.data.reservation_id}`})
   }
 
   let reservation = await resService.read(req.body.data.reservation_id);
 
   if(!reservation)
   {
-    next({status: 404, message: `reservation_id ${req.body.data.reservation_id}`})
+    return next({status: 404, message: `reservation_id ${req.body.data.reservation_id}`})
+  }
+
+  if(reservation.status === "seated"){
+    return next({status: 400, message: `reservation ${reservation.reservation_id} already seated!`})
+  }
+
+  if(reservation.status === "finished"){
+    return next({status: 400, message: `reservation ${reservation.reservation_id} already finished!`})
   }
 
   if(table.reservation_id){
-    next({status:400, message: `Table is occupied!`});
+    return next({status:400, message: `Table is occupied!`});
   }
 
   if(table.capacity < reservation.people)
   {
-    next({status: 400, message: `table does not have sufficient capacity`});
+    return next({status: 400, message: `table does not have sufficient capacity`});
   }
 
-  next();
+  return next();
 }
 
 async function verifyFinish(req, res, next){
@@ -156,10 +166,15 @@ async function verifyFinish(req, res, next){
 
   if(!table.reservation_id)
   {
-    next({status: 400, message: `Table ${table.table_id} is not occupied`})
+    return next({status: 400, message: `Table ${table.table_id} is not occupied`})
   }
 
-  next();
+  let reservation = await resService.read(table.reservation_id);
+  if(!reservation){
+    return next({status: 404, message: `reservation_id ${table.reservation_id}`})
+  }
+  res.locals.reservation = reservation;
+  return next();
 }
 
 module.exports = {

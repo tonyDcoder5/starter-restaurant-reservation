@@ -48,10 +48,10 @@ function SeatReservation() {
     let update = {};
     try {
       if (table.capacity >= reservation.people) {
-        update = update = {
+        update = {
           ...table,
           reservation_id: reservation_id,
-          status: "Booked",
+          status: "seated",
         };
         await updateTable(
           update.table_id,
