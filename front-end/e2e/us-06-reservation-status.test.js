@@ -1,5 +1,5 @@
 const puppeteer = require("puppeteer");
-const { setDefaultOptions } = require('expect-puppeteer');
+const { setDefaultOptions } = require("expect-puppeteer");
 const fs = require("fs");
 const fsPromises = fs.promises;
 
@@ -111,23 +111,18 @@ describe("US-06 - Reservation status - E2E", () => {
 
       const finishButtonSelector = `[data-table-id-finish="${table.table_id}"]`;
       await page.waitForSelector(finishButtonSelector);
-      console.log("line 114")
 
       page.on("dialog", async (dialog) => {
         await dialog.accept();
       });
-      console.log("line 119")
       await page.click(finishButtonSelector);
-      console.log("line 121")
       await page.waitForResponse((response) => {
         return response.url().endsWith(`/tables`);
       });
-      console.log("line 125")
       await page.screenshot({
         path: ".screenshots/us-06-finish-after.png",
         fullPage: true,
       });
-      console.log("line 130")
       expect(
         await page.$(
           `[data-reservation-id-status="${reservation.reservation_id}"]`
