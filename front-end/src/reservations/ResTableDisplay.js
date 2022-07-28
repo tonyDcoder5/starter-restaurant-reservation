@@ -41,7 +41,7 @@ function ResTableDisplay({ data }) {
           <td>
             <Button
               className="btn btn-warning"
-              onClick={()=> history.push(`/reservations/${line.reservation_id}/edit`)}
+              onClick={()=> history.go(`/reservations/${line.reservation_id}/edit`)}
               href={`/reservations/${line.reservation_id}/edit`}
             >
               Edit

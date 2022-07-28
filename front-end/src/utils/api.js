@@ -85,7 +85,9 @@ export async function readReservation(reservation_id, signal){
     signal,
   };
 
-  return await fetchJson(url, options);  
+  return await fetchJson(url, options)
+  .then(formatReservationDate)
+  .then(formatReservationTime);  
 }
 
 export async function searchReservations(search, signal) {
@@ -105,11 +107,11 @@ export async function editReservation(reservation, signal){
   const options = {
     method: "PUT",
     headers,
-    body: JSON.stringify({data: {reservation}}),
+    body: JSON.stringify({data: reservation}),
     signal,
   };
 
-  return await fetchJson(url, options, {})
+  return await fetchJson(url, options, {});
 }
 
 export async function cancelReservation(reservation, signal){

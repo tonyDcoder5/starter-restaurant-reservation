@@ -43,9 +43,8 @@ async function edit(req, res) {
   const editRes = {
     ...req.body.data,
   };
-  
-  await service.edit(editRes);
-  const updateRes = await service.read(editRes.reservation_id);
+  await service.edit(editRes, req.params.reservation_id);
+  const updateRes = await service.read(req.params.reservation_id);
   res.status(200).json({ data: updateRes });
 }
 
@@ -101,7 +100,6 @@ function verifyRes(req, res, next) {
   const reservation = req.body.data;
   let errors = [];
   let message = "";
-
   if (!reservation) {
     message = `Invalid reservation.`;
     errors.push(message);
@@ -164,15 +162,16 @@ function verifyRes(req, res, next) {
 
 function verifyResTime(time) {
   let timeFormat = /\d\d:\d\d/;
-
-  if (time !== "" && timeFormat.test(time)) {
-    let rawTime = time.replace(":", "");
-    if (rawTime >= 1030 && rawTime <= 2130) {
+ 
+  if (time && time !== "" && timeFormat.test(time)) {
+    let resTime = time.split(":")
+    resTime = parseInt(resTime[0] + resTime[1]);
+    if (resTime >= 1030 && resTime <= 2130) {
       return true;
-    } else {
-      return false;
-    }
+    } 
+    return false;
   }
+  return false;
 }
 
 function verifyResDate(date) {

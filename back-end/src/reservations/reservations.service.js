@@ -34,10 +34,10 @@ function search(mobile_number) {
     .orderBy("reservation_date");
 }
 
-function edit(data){
+function edit(data, reservation_id){
   return knex("reservations")
   .select("*")
-  .where("reservation_id", data.reservation_id)
+  .where("reservation_id", reservation_id)
   .update(data, "*")
   .then((result)=> result[0]);
 }
