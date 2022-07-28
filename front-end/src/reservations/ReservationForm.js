@@ -1,12 +1,12 @@
 import {useHistory} from "react-router-dom";
+import { formatAsDate, formatAsTime } from "../utils/date-time";
 
 
 function ReservationForm({ res, handleChange, submitHandler }) {
   const history = useHistory();
-
+ 
   return (
     <div className="container mt-3 mb-5">
-      <h2>New Reservation</h2>
       <form onSubmit={submitHandler}>
         <div className="form-group">
           <div className="row mt-2">

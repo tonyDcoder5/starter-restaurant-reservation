@@ -5,6 +5,7 @@ function list(date) {
   .select("*")
   .where({reservation_date: date})
   .andWhereNot({status: "finished"})
+  .andWhereNot({status: "cancelled"})
   .orderBy("reservation_time", "asc");
 }
 
@@ -18,10 +19,10 @@ function read(reservation_id){
 
 function update(data){
   return knex("reservations")
+  .select("*")
   .where("reservation_id", data.reservation_id)
-  .update({status: data.status})
-  .returning("*")
-  .then((updatedRecords)=>updatedRecords[0]);
+  .update({status: data.status}, "*")
+  .then((result)=> result[0]);
 }
 
 function search(mobile_number) {
@@ -33,12 +34,21 @@ function search(mobile_number) {
     .orderBy("reservation_date");
 }
 
+function edit(data, reservation_id){
+  return knex("reservations")
+  .select("*")
+  .where("reservation_id", reservation_id)
+  .update(data, "*")
+  .then((result)=> result[0]);
+}
+
 module.exports = {
   list,
   create,
   read,
   update,
   search,
+  edit,
 };
 
 
