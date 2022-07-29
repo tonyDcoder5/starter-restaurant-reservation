@@ -40,7 +40,8 @@ export default function NewReservation() {
 
   return (
     <div>
-      <div>
+      <div className="mt-3 container">
+        <h2>Create Reservation</h2>
         {errors.message ? <ErrorAlert error={errors} /> : null}
       </div>
       <ReservationForm
