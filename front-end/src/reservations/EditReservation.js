@@ -34,7 +34,7 @@ export default function EditReservation() {
 
   useEffect(() => {
     loadPage(reservation_id);
-  }, [reservation_id, err]);
+  }, [reservation_id]);
 
   const handleChange = (event) =>
     setReservation({ ...reservation, [event.target.name]: event.target.value });

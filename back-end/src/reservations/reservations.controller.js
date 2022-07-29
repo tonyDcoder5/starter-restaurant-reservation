@@ -16,7 +16,6 @@ async function list(req, res) {
   }
 }
 
-
 // create database call for creating new reservations
 async function create(req, res) {
   const data = await service.create(req.body.data);
@@ -26,7 +25,7 @@ async function create(req, res) {
 
 // read database call for retrieving a specific reservation from database
 function read(req, res) {
-  const data= res.locals.reservation;
+  const data = res.locals.reservation;
 
   res.json({ data });
 }
@@ -37,7 +36,7 @@ async function update(req, res) {
     ...res.locals.reservation,
     status: req.body.data.status,
   };
-  
+
   await service.update(editRes);
   const updateRes = await service.read(editRes.reservation_id);
   res.status(200).json({ data: updateRes });
@@ -55,56 +54,72 @@ async function edit(req, res) {
 
 // check for specific reservation_id in database and store current state in res.locals
 async function resExists(req, res, next) {
-  const {reservation_id} = req.params;
+  const { reservation_id } = req.params;
   const reservation = await service.read(reservation_id);
-  if (reservation) {   
+  if (reservation) {
     res.locals.reservation = reservation;
     return next();
+  } else {
+    return next({
+      status: 404,
+      message: `${reservation_id} reservation cannot be found.`,
+    });
   }
-  else{
-  return next({ status: 404, message: `${reservation_id} reservation cannot be found.` });
-  }
-} 
-  
+}
+
 // checks status property of reservation to make sure it is valid before update
-function verifyStatus(req, res, next){
+function verifyStatus(req, res, next) {
   let statuses = ["booked", "seated", "finished", "cancelled"];
   let reservation = res.locals.reservation;
 
-    if(reservation.status === statuses[0]){
-      return next();
-    }
-    if(reservation.status === statuses[1]){
-      return next();
-    }
-    if(reservation.status === statuses[2]){
-      return next({status: 400, message: `reservation is already finished, cannot update finished reservation ${reservation.reservation_id}`});
-    }
-    if(reservation.status === statuses[3]){
-      return next({status: 400, message: `reservation is already cancelled, cannot update cancelled reservation ${reservation.reservation_id}`});
-    }
+  if (reservation.status === statuses[0]) {
+    return next();
+  }
+  if (reservation.status === statuses[1]) {
+    return next();
+  }
+  if (reservation.status === statuses[2]) {
+    return next({
+      status: 400,
+      message: `reservation is already finished, cannot update finished reservation ${reservation.reservation_id}`,
+    });
+  }
+  if (reservation.status === statuses[3]) {
+    return next({
+      status: 400,
+      message: `reservation is already cancelled, cannot update cancelled reservation ${reservation.reservation_id}`,
+    });
+  }
 
-  return next({status: 400, message: `status: ${reservation.status} is unknown/invalid try again`})
-  
+  return next({
+    status: 400,
+    message: `status: ${reservation.status} is unknown/invalid try again`,
+  });
 }
 
 // checks the status being updated to make sure it is valid before updating reservation property
-function verifyUpdateStatus(req, res, next){
+function verifyUpdateStatus(req, res, next) {
   let update = req.body.data.status;
   let statuses = ["booked", "seated", "finished", "cancelled"];
 
-  if(!update){
-    return next({status: 400, message: `reservation status: ${update} invalid/undefined, try again`})
+  if (!update) {
+    return next({
+      status: 400,
+      message: `reservation status: ${update} invalid/undefined, try again`,
+    });
   }
 
-  if(!statuses.includes(update)){
-    return next({status: 400, message: `reservation status: ${update} invalid/undefined, try again`})
+  if (!statuses.includes(update)) {
+    return next({
+      status: 400,
+      message: `reservation status: ${update} invalid/undefined, try again`,
+    });
   }
 
   return next();
 }
 
-// checks reservation object required properties and runs helper functions for certain edge cases, can compile error messages to display as an array on FE 
+// checks reservation object required properties and runs helper functions for certain edge cases, can compile error messages to display as an array on FE
 // currently only returns first error in order to pass tests
 function verifyRes(req, res, next) {
   const reservation = req.body.data;
@@ -152,13 +167,12 @@ function verifyRes(req, res, next) {
     errors.push(message);
   }
 
-  if(reservation.status !== "booked"){
-    if(reservation.status === "seated"){
-      message = `reservation is already seated`
+  if (reservation.status !== "booked") {
+    if (reservation.status === "seated") {
+      message = `reservation is already seated`;
       errors.push(message);
-    }
-    else if(reservation.status === "finished"){
-      message = `reservation is already finished`
+    } else if (reservation.status === "finished") {
+      message = `reservation is already finished`;
       errors.push(message);
     }
   }
@@ -173,13 +187,13 @@ function verifyRes(req, res, next) {
 // helper function checks reservation_time property for valid entry
 function verifyResTime(time) {
   let timeFormat = /\d\d:\d\d/;
- 
+
   if (time && time !== "" && timeFormat.test(time)) {
-    let resTime = time.split(":")
+    let resTime = time.split(":");
     resTime = parseInt(resTime[0] + resTime[1]);
     if (resTime >= 1030 && resTime <= 2130) {
       return true;
-    } 
+    }
     return false;
   }
   return false;
@@ -192,9 +206,10 @@ function verifyResDate(date) {
   let dateFormat = /\d\d\d\d-\d\d-\d\d/;
 
   if (date && dateFormat.test(date)) {
+    date = date.split("-");
+    date = [date[1], date[2], date[0]].join("-");
     const check = new Date(date);
-
-    if (check.getDay() === 1) {
+    if (check.getDay() === 2) {
       message = "Sorry! We're closed on this day!";
       messages.push(message);
     }
@@ -217,7 +232,7 @@ function verifyResDate(date) {
   return messages;
 }
 
-// helper function checks people property for valid entry 
+// helper function checks people property for valid entry
 function verifyPartyCount(people) {
   if (people && typeof people === "number" && people > 0) {
     return true;
@@ -230,11 +245,15 @@ function verifyMobile(mobile) {
   return mobile ? true : false;
 }
 
-
 module.exports = {
   list: [asyncErrorBoundary(list)],
   create: [verifyRes, asyncErrorBoundary(create)],
   read: [asyncErrorBoundary(resExists), read],
-  update: [verifyUpdateStatus, asyncErrorBoundary(resExists), verifyStatus, asyncErrorBoundary(update)],
-  edit: [asyncErrorBoundary(resExists), verifyRes, asyncErrorBoundary(edit)]
+  update: [
+    verifyUpdateStatus,
+    asyncErrorBoundary(resExists),
+    verifyStatus,
+    asyncErrorBoundary(update),
+  ],
+  edit: [asyncErrorBoundary(resExists), verifyRes, asyncErrorBoundary(edit)],
 };
