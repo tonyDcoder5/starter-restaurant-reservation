@@ -16,21 +16,21 @@ Dashboard displays two tables:
 
 #### US-01 Create and list reservations
 
-![New Reservation Form](/final_screenshots/new_reservation_form_1.png)
+![New Reservation Form](/final_screenshots/new_reservation_form.png)
 
 ![Dashboard - New Reservations](/final_screenshots/dashboard_view_1.png)
 
 #### US-02 Create reservation on a future, working date
 - Cannot create reservation in the past
-![New Reservation Form Error-1](/final_screenshots/new_reservation_form_2_error.png)
+![New Reservation Form Error-1](/final_screenshots/new_reservation_form_error_1.png)
 
 
 - Cannot create reservation on Tuesday (closed on tuesdays)
-![New Reservation Form Error-2](/final_screenshots/new_reservation_form_3_error.png)
+![New Reservation Form Error-2](/final_screenshots/new_reservation_form_error_2.png)
 
 #### US-03 Create reservation within eligible timeframe
 - Cannot create reservation outside of business hours 10:30-21:30
-![New Reservation Form Error-3](/final_screenshots/new_reservation_form_4_error.png)
+![New Reservation Form Error-3](/final_screenshots/new_reservation_form_error_3.png)
 
 #### US-04 Seat reservation
 - Click on reservation seat button to navigate to Seat Reservation page
@@ -45,12 +45,12 @@ Dashboard displays two tables:
 
 #### US-05 Finish an occupied table
 - Finish button shows window message to confirm finish action, cancel makes no changes
-![Finish Reservation](/final_screenshots/dashboard_finish_1.png)
+![Finish Reservation](/final_screenshots/dashboard_finish.png)
 
 
 #### US-06 Reservation Status
 - reservation table shows status booked or seated for reservations depending on current status
-![Reservation Statuses](/final_screenshots/dashboard_statuses.png)
+![Reservation Statuses](/final_screenshots/dashboard_seat_reservation.png)
 
 
 #### US-07 Search for a reservation by phone number
