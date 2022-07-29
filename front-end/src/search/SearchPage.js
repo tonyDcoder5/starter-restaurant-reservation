@@ -13,6 +13,8 @@ function SearchPage() {
     setSearch({ [event.target.name]: event.target.value });
 
   const submitHandler = async (event) => {
+    setError(null);
+    setReservations([])
     event.preventDefault();
     const abortController = new AbortController();
     try {
