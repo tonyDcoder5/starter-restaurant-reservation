@@ -1,6 +1,8 @@
 # Restaurant Reservations Fullstack Web Application
 
 ## Completed fullstack mono-repo for the Thinkful Engineering Immersion Final Capstone project
+### Deployment link 
+https://tdc-rest-res-fe.herokuapp.com/dashboard
 
 ### Installation  
 See [./README.md](./README.md) for detailed instructions.
@@ -22,15 +24,15 @@ Dashboard displays two tables:
 
 #### US-02 Create reservation on a future, working date
 - Cannot create reservation in the past
-![New Reservation Form Error-1](/final_screenshots/new_reservation_form_error_1.png)
+![New Reservation Form Error-1](/final_screenshots/new_reservation_error_1.png)
 
 
 - Cannot create reservation on Tuesday (closed on tuesdays)
-![New Reservation Form Error-2](/final_screenshots/new_reservation_form_error_2.png)
+![New Reservation Form Error-2](/final_screenshots/new_reservation_error_2.png)
 
 #### US-03 Create reservation within eligible timeframe
 - Cannot create reservation outside of business hours 10:30-21:30
-![New Reservation Form Error-3](/final_screenshots/new_reservation_form_error_3.png)
+![New Reservation Form Error-3](/final_screenshots/new_reservation_error_3.png)
 
 #### US-04 Seat reservation
 - Click on reservation seat button to navigate to Seat Reservation page
