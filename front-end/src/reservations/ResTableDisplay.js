@@ -51,8 +51,7 @@ function ResTableDisplay({ data }) {
             <Button
               className="btn btn-danger"
               onClick={()=> cancelHandler(line)}
-              data-reservation-id-cancel={line.reservation_id}
-            >
+              data-reservation-id-cancel={line.reservation_id}>
               Cancel
             </Button>
           </td>
