@@ -108,7 +108,7 @@ function verifyTable(req, res, next) {
   return next();
 }
 
-// helper function returns boolean for capacity property validation
+// returns boolean for capacity property validation
 function verifyCapacity(capacity) {
   if (capacity && typeof capacity === "number" && capacity > 0) {
     return true;
@@ -116,7 +116,7 @@ function verifyCapacity(capacity) {
   return false;
 }
 
-// helper function returns boolean for table_name property validation
+// returns boolean for table_name property validation
 function verifyTableName(name) {
   if (!name || name.length < 2) {
     return false;

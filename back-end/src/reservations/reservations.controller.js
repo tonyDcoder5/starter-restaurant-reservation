@@ -17,21 +17,21 @@ async function list(req, res) {
 }
 
 
-// create handler for creating new reservations in database
+// create database call for creating new reservations
 async function create(req, res) {
   const data = await service.create(req.body.data);
 
   return res.status(201).json({ data });
 }
 
-// read handler for retrieving a specific reservation from database
+// read database call for retrieving a specific reservation from database
 function read(req, res) {
   const data= res.locals.reservation;
 
   res.json({ data });
 }
 
-// update handler for updating status of a specific reservation from database
+// update database call for updating status of a specific reservation from database
 async function update(req, res) {
   const editRes = {
     ...res.locals.reservation,
@@ -43,7 +43,7 @@ async function update(req, res) {
   res.status(200).json({ data: updateRes });
 }
 
-// edit handler for editing any property of a specific reservation in database
+// edit database call for editing any property of a specific reservation
 async function edit(req, res) {
   const editRes = {
     ...req.body.data,
@@ -53,7 +53,7 @@ async function edit(req, res) {
   res.status(200).json({ data: updateRes });
 }
 
-// check for specific reservation id and store current state in res.locals
+// check for specific reservation_id in database and store current state in res.locals
 async function resExists(req, res, next) {
   const {reservation_id} = req.params;
   const reservation = await service.read(reservation_id);
@@ -66,7 +66,7 @@ async function resExists(req, res, next) {
   }
 } 
   
-// checks status property of reservation in database to make sure it is valid before update
+// checks status property of reservation to make sure it is valid before update
 function verifyStatus(req, res, next){
   let statuses = ["booked", "seated", "finished", "cancelled"];
   let reservation = res.locals.reservation;
@@ -88,7 +88,7 @@ function verifyStatus(req, res, next){
   
 }
 
-// checks the status being updated to make sure it is valid before updating reservation property in database
+// checks the status being updated to make sure it is valid before updating reservation property
 function verifyUpdateStatus(req, res, next){
   let update = req.body.data.status;
   let statuses = ["booked", "seated", "finished", "cancelled"];
