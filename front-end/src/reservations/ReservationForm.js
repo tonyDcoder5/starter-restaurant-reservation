@@ -1,6 +1,4 @@
 import {useHistory} from "react-router-dom";
-import { formatAsDate, formatAsTime } from "../utils/date-time";
-
 
 function ReservationForm({ res, handleChange, submitHandler }) {
   const history = useHistory();

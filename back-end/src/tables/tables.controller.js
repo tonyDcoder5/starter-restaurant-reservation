@@ -4,9 +4,8 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const { off } = require("../db/connection");
 
 /**
- * List handler for reservation resources
+ * List handler for table resources
  */
-
 async function list(req, res) {
   const data = await service.list();
 
@@ -15,18 +14,21 @@ async function list(req, res) {
   });
 }
 
+// create new table database call
 async function create(req, res) {
   const data = await service.create(req.body.data);
 
   return res.status(201).json({ data });
 }
 
+// read table reservastion database call
 function read(req, res) {
   const {table: data} = res.locals;
 
   res.json({ data });
 }
 
+// update table reservastion database call
 async function update(req, res) {
   const editTable = {
     ...res.locals.table,
@@ -39,6 +41,7 @@ async function update(req, res) {
   res.json({ data: updateTable });
 }
 
+// finish table reservastion database call
 async function finish(req, res) {
   const editTable = {
     ...res.locals.table,
@@ -53,6 +56,7 @@ async function finish(req, res) {
   res.status(200).json({editTable});
 }
 
+// middleware function stores a valid table in res.locals, or returns an error if table_id does not exist
 async function tableExists(req, res, next) {
   const {table_id} = req.params; 
   
@@ -66,6 +70,7 @@ async function tableExists(req, res, next) {
   return next({ status: 404, message: `table_id: ${table_id} does not exist` });
 }
 
+// middleware function returns first index from array of error if user requested update data does not pass any table property validations
 function verifyTable(req, res, next) {
   const table = req.body.data;
   let errors = [];
@@ -103,6 +108,7 @@ function verifyTable(req, res, next) {
   return next();
 }
 
+// helper function returns boolean for capacity property validation
 function verifyCapacity(capacity) {
   if (capacity && typeof capacity === "number" && capacity > 0) {
     return true;
@@ -110,6 +116,7 @@ function verifyCapacity(capacity) {
   return false;
 }
 
+// helper function returns boolean for table_name property validation
 function verifyTableName(name) {
   if (!name || name.length < 2) {
     return false;
@@ -120,6 +127,8 @@ function verifyTableName(name) {
   }
 }
 
+// middleware function to check user requested update data for necessary properties, as well as to check that table is not occupied
+// and that the reservation being seated is valid 
 async function verifyUpdate(req, res, next){
   let table = res.locals.table;
   let data = req.body.data;
@@ -161,6 +170,7 @@ async function verifyUpdate(req, res, next){
   return next();
 }
 
+// middleware function checks table in database for reservation_id in order to check for and store a valid reservation in res.locals
 async function verifyFinish(req, res, next){
   let table = res.locals.table;
 

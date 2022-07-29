@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { editReservation, readReservation } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
-import { formatAsDate } from "../utils/date-time";
 
 export default function EditReservation() {
   let initialForm = {

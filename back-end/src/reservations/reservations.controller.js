@@ -16,18 +16,22 @@ async function list(req, res) {
   }
 }
 
+
+// create handler for creating new reservations in database
 async function create(req, res) {
   const data = await service.create(req.body.data);
 
   return res.status(201).json({ data });
 }
 
+// read handler for retrieving a specific reservation from database
 function read(req, res) {
   const data= res.locals.reservation;
 
   res.json({ data });
 }
 
+// update handler for updating status of a specific reservation from database
 async function update(req, res) {
   const editRes = {
     ...res.locals.reservation,
@@ -39,6 +43,7 @@ async function update(req, res) {
   res.status(200).json({ data: updateRes });
 }
 
+// edit handler for editing any property of a specific reservation in database
 async function edit(req, res) {
   const editRes = {
     ...req.body.data,
@@ -48,6 +53,7 @@ async function edit(req, res) {
   res.status(200).json({ data: updateRes });
 }
 
+// check for specific reservation id and store current state in res.locals
 async function resExists(req, res, next) {
   const {reservation_id} = req.params;
   const reservation = await service.read(reservation_id);
@@ -60,6 +66,7 @@ async function resExists(req, res, next) {
   }
 } 
   
+// checks status property of reservation in database to make sure it is valid before update
 function verifyStatus(req, res, next){
   let statuses = ["booked", "seated", "finished", "cancelled"];
   let reservation = res.locals.reservation;
@@ -81,6 +88,7 @@ function verifyStatus(req, res, next){
   
 }
 
+// checks the status being updated to make sure it is valid before updating reservation property in database
 function verifyUpdateStatus(req, res, next){
   let update = req.body.data.status;
   let statuses = ["booked", "seated", "finished", "cancelled"];
@@ -96,6 +104,8 @@ function verifyUpdateStatus(req, res, next){
   return next();
 }
 
+// checks reservation object required properties and runs helper functions for certain edge cases, can compile error messages to display as an array on FE 
+// currently only returns first error in order to pass tests
 function verifyRes(req, res, next) {
   const reservation = req.body.data;
   let errors = [];
@@ -160,6 +170,7 @@ function verifyRes(req, res, next) {
   return next();
 }
 
+// helper function checks reservation_time property for valid entry
 function verifyResTime(time) {
   let timeFormat = /\d\d:\d\d/;
  
@@ -174,6 +185,7 @@ function verifyResTime(time) {
   return false;
 }
 
+// helper function checks reservation_date property for valid entry
 function verifyResDate(date) {
   let messages = [];
   let message = "";
@@ -205,6 +217,7 @@ function verifyResDate(date) {
   return messages;
 }
 
+// helper function checks people property for valid entry 
 function verifyPartyCount(people) {
   if (people && typeof people === "number" && people > 0) {
     return true;
@@ -212,6 +225,7 @@ function verifyPartyCount(people) {
   return false;
 }
 
+// helper function checks mobile_number property for valid entry
 function verifyMobile(mobile) {
   return mobile ? true : false;
 }

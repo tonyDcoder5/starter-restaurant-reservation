@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Table, Button } from "react-bootstrap";
 import { Link, useHistory } from "react-router-dom";
-import { listReservations, cancelReservation } from "../utils/api";
+import { cancelReservation } from "../utils/api";
 import { formatAsTime, formatAsDate } from "../utils/date-time";
 
 function ResTableDisplay({ data }) {
