@@ -6,7 +6,7 @@
 
 /* DASHBOARD TABLES CSS */
 .reservations-display {  
-  border: 3px solid rgb(30, 30, 30);
+  border: 5px solid rgb(30, 30, 30);
   padding: 1em;
   padding-bottom: 20px;
   border-radius: 20px;
@@ -14,7 +14,7 @@
 }
 
 .tables-display {  
-  border: 3px solid rgb(30, 30, 30);
+  border: 5px solid rgb(30, 30, 30);
   padding: 1em;
   padding-right: 3em;
   padding-bottom: 20px;
