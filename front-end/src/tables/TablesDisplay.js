@@ -30,7 +30,7 @@ function TablesDisplay({ data }) {
 
     return arr.map((line, index) => {
       return (
-        <tr key={index}>
+        <tr key={line.table_id}>
           <td>{line.table_id}</td>
           <td>{line.table_name}</td>
           <td>{line.capacity}</td>
